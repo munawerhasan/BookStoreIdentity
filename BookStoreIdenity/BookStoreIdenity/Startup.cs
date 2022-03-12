@@ -1,6 +1,7 @@
 using BookStoreIdenity.Data;
 using BookStoreIdenity.Models;
 using BookStoreIdenity.Repository;
+using BookStoreIdenity.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -41,6 +42,7 @@ namespace BookStoreIdenity
                 .AddEntityFrameworkStores<BookStoreContext>();
 
             services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IUserService, UserService>(); services.AddScoped<IUserService, UserService>();
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequiredLength = 6;
@@ -72,7 +74,6 @@ namespace BookStoreIdenity
             app.UseAuthentication();
 
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

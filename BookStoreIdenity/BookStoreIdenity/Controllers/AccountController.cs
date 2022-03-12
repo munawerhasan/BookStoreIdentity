@@ -1,5 +1,6 @@
 ﻿using BookStoreIdenity.Models;
 using BookStoreIdenity.Repository;
+using BookStoreIdenity.Shared;
 using Common.ApiResponse;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -57,5 +58,60 @@ namespace BookStoreIdenity.Controllers
             }
             return response;
         }
+
+        [HttpPost]
+        [Route("login")]
+        public async Task<ApiResponse> Login([FromBody] SignInModel signInModel)
+        {
+            ApiResponse response = new ApiResponse();
+            try
+            {
+                
+                Claims claims = await _accountRepository.PasswordSignInAsync(signInModel).ConfigureAwait(false);
+                if (claims != null)
+                {
+                    response.ResponseData = claims;
+                    response.Message = "Login successfully";
+                    response.Status = 1;
+
+                }
+                else
+                {
+                    response.ResponseData = claims;
+                    response.Message = "Username & Password is invalid!";
+                    response.Status = 0;
+                }
+
+            }
+
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        [HttpPost]
+        [Route("change-password")]
+        public async Task<ApiResponse> ChangePassword(ChangePasswordModel model)
+        {
+            ApiResponse response = new ApiResponse();
+            if (ModelState.IsValid)
+            {
+                var result = await _accountRepository.ChangePasswordAsync(model);
+                if (result.Succeeded)
+                {
+                    response.Message = "Password changed successfully";
+                    response.Status = 1;
+                }
+                else
+                {
+                    response.Message = "Password is not change!";
+                    response.Status = 0;
+                }
+            }
+            return response;
+        }
     }
 }
+

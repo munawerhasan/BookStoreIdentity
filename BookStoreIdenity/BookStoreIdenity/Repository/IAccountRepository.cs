@@ -1,4 +1,5 @@
 ﻿using BookStoreIdenity.Models;
+using BookStoreIdenity.Shared;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -12,5 +13,7 @@ namespace BookStoreIdenity.Repository
         Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel);
         Task<bool> IsValidUser(string userName);
         Task<bool> IsValidEmail(string userEmail);
+        Task<Claims> PasswordSignInAsync(SignInModel signInModel);
+        Task<IdentityResult> ChangePasswordAsync(ChangePasswordModel model);
     }
 }
