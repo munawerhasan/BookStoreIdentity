@@ -1,5 +1,6 @@
 ﻿using BookStoreIdenity.Models;
 using BookStoreIdenity.Repository;
+using BookStoreIdenity.Service;
 using BookStoreIdenity.Shared;
 using Common.ApiResponse;
 using Microsoft.AspNetCore.Http;
@@ -17,10 +18,11 @@ namespace BookStoreIdenity.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountRepository _accountRepository;
-
-        public AccountController(IAccountRepository accountRepository)
+        private readonly IEmailService _emailService;
+        public AccountController(IAccountRepository accountRepository, IEmailService emailService)
         {
             _accountRepository = accountRepository;
+            _emailService = emailService;
         }
         [Route("signup")]
         [HttpPost]
@@ -70,6 +72,16 @@ namespace BookStoreIdenity.Controllers
                 Claims claims = await _accountRepository.PasswordSignInAsync(signInModel).ConfigureAwait(false);
                 if (claims != null)
                 {
+                    UserEmailOptions options = new UserEmailOptions
+                    {
+                        ToEmails = new List<string>() { "munawerhasan52@gmail.com" },
+                        PlaceHolders = new List<KeyValuePair<string, string>>()
+                        {
+                            new KeyValuePair<string, string>("{{UserName}}", "John")
+                        }
+                    };
+
+                    await _emailService.SendTestEmail(options);
                     response.ResponseData = claims;
                     response.Message = "Login successfully";
                     response.Status = 1;
@@ -101,8 +113,10 @@ namespace BookStoreIdenity.Controllers
                 var result = await _accountRepository.ChangePasswordAsync(model);
                 if (result.Succeeded)
                 {
+                   
                     response.Message = "Password changed successfully";
                     response.Status = 1;
+
                 }
                 else
                 {

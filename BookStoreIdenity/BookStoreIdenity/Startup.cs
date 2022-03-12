@@ -42,7 +42,10 @@ namespace BookStoreIdenity
                 .AddEntityFrameworkStores<BookStoreContext>();
 
             services.AddScoped<IAccountRepository, AccountRepository>();
-            services.AddScoped<IUserService, UserService>(); services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.Configure<SMTPConfigModel>(Configuration.GetSection("SMTPConfig"));
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequiredLength = 6;
